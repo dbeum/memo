@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "688903065578",
+    "project_id": "web1-leave",
+    "storage_bucket": "web1-leave.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688903065578:android:17fd577857691c80522c93",
+        "android_client_info": {
+          "package_name": "com.example.web_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_qi-OWKFPPZJhmSA1iGa57D_89WIvLOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

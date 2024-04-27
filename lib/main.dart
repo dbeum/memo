@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:web_1/home.dart';
+import 'package:web_1/login.dart';
+import 'register.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

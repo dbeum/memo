@@ -2,20 +2,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:web_1/home2.dart';
-
 import 'firebase_options.dart';
 import 'register.dart';
 
 
-class login extends StatefulWidget {
-  const login({super.key});
+class register extends StatefulWidget {
+  const register({super.key});
 
   @override
-  State<login> createState() => _loginState();
+  State<register> createState() => _registerState();
 }
 
-class _loginState extends State<login> {
+class _registerState extends State<register> {
  //String selectedValue = 'Undergraduate';
  late final TextEditingController _email;
  late final TextEditingController _password;
@@ -166,9 +164,8 @@ Container(
           
        ),
        //SizedBox(height: 2,),
-  TextButton(onPressed: () {
-    Navigator.push(context, MaterialPageRoute(builder:(context) => home2() ));
-  }, child:      Text('Register',style:TextStyle(fontSize: 10),))
+ 
+ 
         ],
       );
           //default:

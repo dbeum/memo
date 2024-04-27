@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:web_1/login.dart';
+import 'package:web_1/register.dart';
 
-class home extends StatefulWidget {
-  const home({super.key});
+class home2 extends StatefulWidget {
+  const home2({super.key});
 
   @override
-  State<home> createState() => _homeState();
+  State<home2> createState() => _home2State();
 }
 
-class _homeState extends State<home> {
+class _home2State extends State<home2> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -25,7 +26,7 @@ class _homeState extends State<home> {
                     ),
          
         ),
-        login()
+        register()
         
       ],
       )
