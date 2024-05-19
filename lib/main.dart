@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:web_1/home.dart';
-import 'package:web_1/juniorf.dart';
+import 'package:web_1/nav/juniorf.dart';
 import 'package:web_1/login.dart';
+import 'package:web_1/nav/senior.dart';
 
 import 'register.dart';
 

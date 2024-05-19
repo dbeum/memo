@@ -131,7 +131,9 @@ Container(
                     _selectedRole = newValue!;
                   });
                 },
-                items: ['Admin','Supervisor','Junior Staff','Senior Staff',].map((String value) {
+                items: [
+                  //'Admin','Supervisor',
+                  'Junior Staff','Senior Staff',].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value,
@@ -333,7 +335,9 @@ Container(
                     _selectedRole = newValue!;
                   });
                 },
-                items: ['Admin','Supervisor', 'Junior Staff','Senior Staff','Lecturers'].map((String value) {
+                items: [
+                //  'Admin','Supervisor',
+                   'Junior Staff','Senior Staff','Lecturers'].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value,
