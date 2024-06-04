@@ -3,16 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:web_1/nav/admin.dart';
-import 'package:web_1/editprofile.dart';
+import 'package:web_1/nav/roles/admin.dart';
+//import 'package:web_1/editprofile.dart';
 import 'package:web_1/home2.dart';
-import 'package:web_1/nav/junior.dart';
-import 'package:web_1/nav/juniorf.dart';
-import 'package:web_1/nav/lecturers.dart';
-import 'package:web_1/nav/lecturersf.dart';
-import 'package:web_1/nav/personal.dart';
-import 'package:web_1/nav/senior.dart';
-import 'package:web_1/nav/seniorf.dart';
+
+import 'package:web_1/nav/roles/juniorf.dart';
 
 import 'firebase_options.dart';
 import 'register.dart';
@@ -145,25 +140,9 @@ Container(
        
     if (_selectedRole == 'Admin') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin())); // Navigate to admin screen
-        }  else if (_selectedRole == 'Junior Staff' && _selectedGender== 'Female' ) {
+        }  else {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => juniorF())); // Navigate to junior staff screen
-        }else if (_selectedRole == 'Junior Staff' ) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => junior())); // Navigate to junior staff screen
-        } else if (_selectedRole == 'Senior Staff' && _selectedGender== 'Female') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => seniorf())); // Navigate to senior staff screen
-        } 
-        else if (_selectedRole == 'Senior Staff') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => senior())); // Navigate to senior staff screen
-        } 
-       else if (_selectedRole == 'Supervisor') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => personel())); // Navigate to senior staff screen
-        } 
-        else if (_selectedRole == 'Lecturers'  && _selectedGender== 'Female' ) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => lecturersf())); // Navigate to senior staff screen
-        } 
-        else if (_selectedRole == 'Lecturers') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => lecturers())); // Navigate to senior staff screen
-        } 
+        }
            print(UserCredential);
           
         }}
@@ -299,17 +278,9 @@ Container(
       
     if (_selectedRole == 'Admin') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin())); // Navigate to admin screen
-        } else if (_selectedRole == 'Junior Staff' && _selectedGender== 'Female' ) {
+        } else {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => juniorF())); // Navigate to junior staff screen
-        }else if (_selectedRole == 'Junior Staff' ) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => junior())); // Navigate to junior staff screen
         }
-         else if (_selectedRole == 'Senior Staff') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => senior())); // Navigate to senior staff screen
-        } 
-          else if (_selectedRole== 'Supervisor') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => personel())); // Navigate to senior staff screen
-        } 
     }
     print(UserCredential);
   } on FirebaseAuthException catch (e) {
