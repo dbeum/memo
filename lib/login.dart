@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:web_1/nav/roles/admin.dart';
 //import 'package:web_1/editprofile.dart';
 import 'package:web_1/home2.dart';
+import 'package:web_1/nav/roles/amin1.dart';
 
 import 'package:web_1/nav/roles/juniorf.dart';
 
@@ -139,7 +140,7 @@ Container(
        final _selectedGender = userData.data()?['gender'];
        
     if (_selectedRole == 'Admin') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin())); // Navigate to admin screen
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin1())); // Navigate to admin screen
         }  else {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => juniorF())); // Navigate to junior staff screen
         }
@@ -277,7 +278,7 @@ Container(
    
       
     if (_selectedRole == 'Admin') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin())); // Navigate to admin screen
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => admin1())); // Navigate to admin screen
         } else {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => juniorF())); // Navigate to junior staff screen
         }

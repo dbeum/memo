@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:web_1/initial.dart';
+import 'package:web_1/leaverequest.dart';
+
 
 
 class juniorF extends StatefulWidget {
@@ -152,6 +154,22 @@ class _juniorFState extends State<juniorF> {
                 Icon(Icons.edit),
                 TextButton(
                   onPressed: _navigateToEditProfile,
+                  child: Text(
+                    'Edit Profile',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+          ),
+            Positioned(
+            top: 100,
+            left: 400,
+            child: Row(
+              children: [
+                Icon(Icons.edit),
+                TextButton(
+                  onPressed:() =>  Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequestForm())),
                   child: Text(
                     'Edit Profile',
                     style: TextStyle(fontSize: 20),
