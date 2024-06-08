@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:web_1/initial.dart';
+
 
 class juniorF extends StatefulWidget {
   const juniorF({super.key});
@@ -25,23 +25,31 @@ class _juniorFState extends State<juniorF> {
     _fetchBioInfo();
   }
 
- Future<void> _fetchBioInfo() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userId = user.uid;
-    final userData = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    if (userData.exists) {
-      final data = userData.data();
-      if (data != null && data.containsKey('name') && data.containsKey('employeeId')) {
-        setState(() {
-          name = data['name'];
-          employeeId = data['employeeId'];
-          role = data['role'] ?? 'No role available';
-          gender = data['gender'] ?? 'No gender available';
-          email = user.email ?? 'No email available';
-          imageUrl = data['imageUrl'];
-        });
+  Future<void> _fetchBioInfo() async {
+    final user = FirebaseAuth.instance.currentUser; // Get the current user
+    if (user != null) {
+      final userId = user.uid;
+      final userData = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (userData.exists) {
+        final data = userData.data();
+        if (data != null && data.containsKey('name') && data.containsKey('employeeId') && data.containsKey('imageUrl')) {
+          setState(() {
+            name = data['name'];
+            employeeId = data['employeeId'];
+            role = data['role'] ?? 'No role available';
+            gender = data['gender'] ?? 'No gender available';
+            email = user.email ?? 'No email available';
+            imageUrl = data['imageUrl'];
+          });
+        } else {
+          // Redirect to InitialDataForm if data is incomplete
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => InitialDataForm()),
+          );
+        }
       } else {
+        // Redirect to InitialDataForm if no data exists
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => InitialDataForm()),
@@ -49,10 +57,16 @@ class _juniorFState extends State<juniorF> {
       }
     }
   }
-}
 
-
- 
+  void _navigateToEditProfile() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => InitialDataForm()),
+    );
+    if (result == true) {
+      _fetchBioInfo();  // Refresh bio info after editing
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,17 +145,15 @@ class _juniorFState extends State<juniorF> {
             ),
           ),
           Positioned(
-            top: 200,
-            left: 900,
+            top: 450,
+            left: 50,
             child: Row(
               children: [
                 Icon(Icons.edit),
                 TextButton(
-                  onPressed:() {
-                    
-                  } ,
+                  onPressed: _navigateToEditProfile,
                   child: Text(
-                    'Request For Leave',
+                    'Edit Profile',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
