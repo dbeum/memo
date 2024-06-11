@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
-import 'firebase_options.dart';
 
 class LeaveRequestForm extends StatefulWidget {
   const LeaveRequestForm({Key? key}) : super(key: key);
@@ -16,29 +15,17 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
   late final TextEditingController _reasonController;
   String _selectedLeaveType = 'Annual Leave';
   PlatformFile? _pickedFile;
-  bool _isFemale = false;
 
   @override
   void initState() {
     _reasonController = TextEditingController();
     super.initState();
-    _fetchUserData();
   }
 
   @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      setState(() {
-        _isFemale = userData['gender'] == 'Female';
-      });
-    }
   }
 
   Future<void> _pickFile() async {
@@ -61,6 +48,30 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
     return null;
   }
 
+  Future<void> _submitLeaveRequest(String userId) async {
+    final reason = _reasonController.text;
+    final leaveType = _selectedLeaveType;
+    final pdfUrl = await _uploadFile(userId);
+
+    await FirebaseFirestore.instance.collection('leave_requests').add({
+      'leaveType': leaveType,
+      'reason': reason,
+      'userId': userId,
+      'pdfUrl': pdfUrl,
+      'status': 'pending',
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave request submitted successfully')));
+
+    // Clear the form
+    _reasonController.clear();
+    setState(() {
+      _selectedLeaveType = 'Annual Leave';
+      _pickedFile = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,13 +88,8 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                   _selectedLeaveType = newValue!;
                 });
               },
-              items: <String>[
-                'Annual Leave',
-                'Sick Leave',
-                if (_isFemale) 'Maternity Leave',
-                'Casual Leave',
-                'Examination Leave'
-              ].map<DropdownMenuItem<String>>((String value) {
+              items: <String>['Annual Leave', 'Sick Leave', 'Maternity Leave', 'Casual Leave', 'Examination Leave']
+                  .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -108,29 +114,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final reason = _reasonController.text;
-                final leaveType = _selectedLeaveType;
                 final user = FirebaseAuth.instance.currentUser;
-
                 if (user != null) {
-                  final attachmentUrl = await _uploadFile(user.uid);
-
-                  await FirebaseFirestore.instance.collection('leave_requests').add({
-                    'leaveType': leaveType,
-                    'reason': reason,
-                    'userId': user.uid,
-                    'attachment': attachmentUrl,
-                    'timestamp': FieldValue.serverTimestamp(),
-                  });
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave request submitted successfully')));
-
-                  // Clear the form
-                  _reasonController.clear();
-                  setState(() {
-                    _selectedLeaveType = 'Annual Leave';
-                    _pickedFile = null;
-                  });
+                  await _submitLeaveRequest(user.uid);
                 }
               },
               child: Text('Submit Leave Request'),

@@ -27,6 +27,10 @@ class LeaveRequests extends StatelessWidget {
               final leaveType = data != null && data.containsKey('leaveType') ? data['leaveType'] : 'Unknown';
               final reason = data != null && data.containsKey('reason') ? data['reason'] : 'No reason provided';
               final userId = data != null && data.containsKey('userId') ? data['userId'] : 'Unknown';
+              final pdfUrl = data != null && data.containsKey('pdfUrl') ? data['pdfUrl'] : null;
+
+              print('Leave Request: $leaveRequest');
+              print('pdfUrl: $pdfUrl');
 
               return ListTile(
                 title: Text(leaveType),
@@ -59,16 +63,26 @@ class LeaveRequests extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.file_download),
                       onPressed: () async {
-                        String? pdfUrl = data != null && data.containsKey('pdfUrl') ? data['pdfUrl'] : null;
                         if (pdfUrl != null && pdfUrl.isNotEmpty) {
-                          if (await canLaunch(pdfUrl)) {
-                            await launch(pdfUrl);
-                          } else {
+                          try {
+                            final uri = Uri.parse(pdfUrl);
+                            print('Launching URL: $pdfUrl');
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(uri);
+                            } else {
+                              print('Could not launch URL');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Could not launch URL')),
+                              );
+                            }
+                          } catch (e) {
+                            print('Invalid PDF URL: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Could not launch URL')),
+                              SnackBar(content: Text('Invalid PDF URL: $e')),
                             );
                           }
                         } else {
+                          print('No PDF attached');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('No PDF attached')),
                           );

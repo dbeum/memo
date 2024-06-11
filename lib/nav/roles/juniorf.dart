@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:web_1/initial.dart';
 import 'package:web_1/leaverequest.dart';
+import 'package:web_1/nav/leavehistory.dart';
 
 
 
@@ -171,7 +172,23 @@ class _juniorFState extends State<juniorF> {
                 TextButton(
                   onPressed:() =>  Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequestForm())),
                   child: Text(
-                    'Edit Profile',
+                    'Request Leave',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+          ),
+            Positioned(
+            top: 100,
+            left: 600,
+            child: Row(
+              children: [
+                Icon(Icons.edit),
+                TextButton(
+                  onPressed:() =>  Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveHistoryPage())),
+                  child: Text(
+                    'Leave History',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
