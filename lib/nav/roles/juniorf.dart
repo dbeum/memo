@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:web_1/home.dart';
 import 'package:web_1/initial.dart';
 import 'package:web_1/leaverequest.dart';
 import 'package:web_1/nav/leavehistory.dart';
@@ -69,6 +70,14 @@ class _juniorFState extends State<juniorF> {
     if (result == true) {
       _fetchBioInfo();  // Refresh bio info after editing
     }
+  }
+
+   final FirebaseAuth auth = FirebaseAuth.instance;
+
+ signOut() async {
+    await auth.signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => home()));
   }
 
   @override
@@ -195,6 +204,20 @@ class _juniorFState extends State<juniorF> {
               ],
             ),
           ),
+            Positioned(
+            top: 600,
+            left: 100,
+            child: Row(
+              children: [
+                Icon(Icons.logout),
+                 
+                TextButton(onPressed: () {signOut();}, child: Text('LOGOUT'))
+              ],
+            
+          ),
+            )
+              
+          
         ],
       ),
     );

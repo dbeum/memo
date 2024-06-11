@@ -25,19 +25,20 @@ class EmployeeDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                title: Text(user['name']),
+                title: Text(user['name'],style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
                 subtitle: Text('Employee ID: ${user['employeeId']}'),
               ),
               ListTile(
-                title: Text('Gender'),
+                title: Text('Gender:',style: TextStyle(fontWeight: FontWeight.bold),),
                 subtitle: Text(user['gender']),
               ),
               ListTile(
-                title: Text('Role'),
+                title: Text('Role:',style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(user['role']),
               ),
               SizedBox(height: 10,),
-              Text('LEAVE HISTORY',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+            
+              Text('   LEAVE HISTORY',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
               Expanded(
                 child: LeaveHistory(userId: userId),
               ),
