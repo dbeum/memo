@@ -21,7 +21,7 @@ class _juniorFState extends State<juniorF> {
   String? role;
   String? gender;
   String? email;
-  String? imageUrl;
+
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _juniorFState extends State<juniorF> {
             role = data['role'] ?? 'No role available';
             gender = data['gender'] ?? 'No gender available';
             email = user.email ?? 'No email available';
-            imageUrl = data['imageUrl'];
+            
           });
         } else {
           // Redirect to InitialDataForm if data is incomplete
@@ -85,47 +85,18 @@ class _juniorFState extends State<juniorF> {
     return Scaffold(
       body: Stack(
         children: [
-          if (imageUrl != null)
-            Positioned(
-              top: 50,
-              left: 220,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(imageUrl!),
-                onBackgroundImageError: (exception, stackTrace) {
-                  setState(() {
-                    imageUrl = null;
-                  });
-                },
-              ),
-            )
-          else
-            Positioned(
-              top: 50,
-              left: 220,
-              child: CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.person),
-              ),
-            ),
+        
           Positioned(
-            top: 150,
-            left: 220,
+            top: 250,
+            left: 50,
             child: Text(
               name != null ? 'Employee Name: $name' : 'Employee Name: Loading...',
               style: TextStyle(fontSize: 25),
             ),
           ),
+        
           Positioned(
-            top: 200,
-            left: 50,
-            child: Text(
-              'Name: ${name ?? 'Loading...'}',
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          Positioned(
-            top: 250,
+            top: 300,
             left: 50,
             child: Text(
               'Employee ID: ${employeeId ?? 'Loading...'}',
@@ -133,7 +104,7 @@ class _juniorFState extends State<juniorF> {
             ),
           ),
           Positioned(
-            top: 300,
+            top: 350,
             left: 50,
             child: Text(
               'Role: ${role ?? 'Loading...'}',
@@ -141,7 +112,7 @@ class _juniorFState extends State<juniorF> {
             ),
           ),
           Positioned(
-            top: 350,
+            top: 400,
             left: 50,
             child: Text(
               'Gender: ${gender ?? 'Loading...'}',
@@ -149,7 +120,7 @@ class _juniorFState extends State<juniorF> {
             ),
           ),
           Positioned(
-            top: 400,
+            top: 450,
             left: 50,
             child: Text(
               'Email: ${email ?? 'Loading...'}',
@@ -157,7 +128,7 @@ class _juniorFState extends State<juniorF> {
             ),
           ),
           Positioned(
-            top: 450,
+            top: 480,
             left: 50,
             child: Row(
               children: [
@@ -166,7 +137,7 @@ class _juniorFState extends State<juniorF> {
                   onPressed: _navigateToEditProfile,
                   child: Text(
                     'Edit Profile',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 13),
                   ),
                 ),
               ],
@@ -177,7 +148,7 @@ class _juniorFState extends State<juniorF> {
             left: 400,
             child: Row(
               children: [
-                Icon(Icons.edit),
+                Icon(Icons.add_task),
                 TextButton(
                   onPressed:() =>  Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequestForm())),
                   child: Text(
@@ -193,7 +164,7 @@ class _juniorFState extends State<juniorF> {
             left: 600,
             child: Row(
               children: [
-                Icon(Icons.edit),
+                Icon(Icons.history),
                 TextButton(
                   onPressed:() =>  Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveHistoryPage())),
                   child: Text(
@@ -211,10 +182,15 @@ class _juniorFState extends State<juniorF> {
               children: [
                 Icon(Icons.logout),
                  
-                TextButton(onPressed: () {signOut();}, child: Text('LOGOUT'))
+                TextButton(onPressed: () {signOut();}, child: Text('LOGOUT',style: TextStyle(color: Colors.red),))
               ],
             
           ),
+            ),
+              Positioned(
+            top: 180,
+            left: 500,
+            child:Image.asset('images/junior.png')
             )
               
           

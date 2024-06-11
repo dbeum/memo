@@ -25,17 +25,32 @@ class _admin1State extends State<admin1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Stack(children: [ Center(
         child: Column(
           children: [
-TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequests(),)), child: Text('leave')),
-SizedBox(height: 10,),
-TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => admin(),)), child: Text('profile')),
-SizedBox(height:10),
-TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => EmployeeListPage())), child: Text('Employees')),
-TextButton(onPressed: () {signOut();}, child: Text('LOGOUT'))
+            SizedBox(height: 50,),
+            Image.asset('images/logo.png'),
+            SizedBox(height: 30,),
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequests(),)), child: Text('LEAVE REQUESTS',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
+SizedBox(height: 15,),
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => admin(),)), child: Text('PROFILE EDITS',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
+SizedBox(height:15),
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => EmployeeListPage())), child: Text('EMPLOYEES',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
+ 
           ],
         ),),
+          Positioned(
+            top: 600,
+            left: 100,
+            child: Row(
+              children: [
+                Icon(Icons.logout),
+                 
+                TextButton(onPressed: () {signOut();}, child: Text('LOGOUT',style: TextStyle(color: Colors.red),))
+              ],
+            
+          ),)
+          ],)
       );
   }
 }

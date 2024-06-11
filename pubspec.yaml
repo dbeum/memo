@@ -50,5 +50,7 @@ flutter:
   assets:
      - assets/images/admin.jpg
      - assets/images/logo.png
+     - assets/images/junior.png
+
 
   
