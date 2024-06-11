@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_1/employeelist.dart';
 import 'package:web_1/leaverequest.dart';
 import 'package:web_1/leaverequestservice.dart';
 import 'package:web_1/nav/roles/admin.dart';
@@ -19,7 +20,9 @@ class _admin1State extends State<admin1> {
           children: [
 TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveRequests(),)), child: Text('leave')),
 SizedBox(height: 10,),
-TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => admin(),)), child: Text('profile'))
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => admin(),)), child: Text('profile')),
+SizedBox(height:10),
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => EmployeeListPage())), child: Text('Employees'))
           ],
         ),),
       );
