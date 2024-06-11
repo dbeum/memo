@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:web_1/employeedetail.dart';
 
 class EmployeeListPage extends StatefulWidget {
   @override
@@ -49,6 +50,14 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                 title: Text(user['name']),
                 subtitle: Text('Employee ID: ${user['employeeId']}'),
                 trailing: Text(user['role']),
+                   onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmployeeDetailPage(userId: user.id),
+                          ),
+                        );
+                      },
               );
             },
           );
