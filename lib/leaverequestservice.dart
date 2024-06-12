@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 class LeaveRequests extends StatelessWidget {
   @override
@@ -28,9 +29,8 @@ class LeaveRequests extends StatelessWidget {
               final reason = data != null && data.containsKey('reason') ? data['reason'] : 'No reason provided';
               final userId = data != null && data.containsKey('userId') ? data['userId'] : 'Unknown';
               final pdfUrl = data != null && data.containsKey('pdfUrl') ? data['pdfUrl'] : null;
-
-              print('Leave Request: $leaveRequest');
-              print('pdfUrl: $pdfUrl');
+              final startDate = data != null && data.containsKey('startDate') ? (data['startDate'] as Timestamp).toDate() : null;
+              final endDate = data != null && data.containsKey('endDate') ? (data['endDate'] as Timestamp).toDate() : null;
 
               return ListTile(
                 title: Text(leaveType),
@@ -39,6 +39,8 @@ class LeaveRequests extends StatelessWidget {
                   children: [
                     Text('Reason: $reason'),
                     Text('Employee ID: $userId'),
+                    if (startDate != null) Text('Start Date: ${DateFormat('yyyy-MM-dd').format(startDate)}'),
+                    if (endDate != null) Text('End Date: ${DateFormat('yyyy-MM-dd').format(endDate)}'),
                   ],
                 ),
                 trailing: Row(
@@ -66,23 +68,19 @@ class LeaveRequests extends StatelessWidget {
                         if (pdfUrl != null && pdfUrl.isNotEmpty) {
                           try {
                             final uri = Uri.parse(pdfUrl);
-                            print('Launching URL: $pdfUrl');
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(uri);
                             } else {
-                              print('Could not launch URL');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Could not launch URL')),
                               );
                             }
                           } catch (e) {
-                            print('Invalid PDF URL: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Invalid PDF URL: $e')),
                             );
                           }
                         } else {
-                          print('No PDF attached');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('No PDF attached')),
                           );
