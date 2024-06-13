@@ -17,17 +17,36 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
   DateTime? _startDate;
   DateTime? _endDate;
   PlatformFile? _pickedFile;
+  String? _userGender;
+  List<String> _leaveTypes = ['Annual Leave', 'Sick Leave', 'Casual Leave', 'Examination Leave'];
 
   @override
   void initState() {
     _reasonController = TextEditingController();
     super.initState();
+    _fetchUserGender();
   }
 
   @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchUserGender() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final userData = userDoc.data();
+      if (userData != null && userData.containsKey('gender')) {
+        setState(() {
+          _userGender = userData['gender'];
+          if (_userGender == 'Female') {
+            _leaveTypes.add('Maternity Leave');
+          }
+        });
+      }
+    }
   }
 
   Future<void> _pickFile() async {
@@ -100,8 +119,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                   _selectedLeaveType = newValue!;
                 });
               },
-              items: <String>['Annual Leave', 'Sick Leave', 'Maternity Leave', 'Casual Leave', 'Examination Leave']
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: _leaveTypes.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -170,6 +188,4 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
       ),
     );
   }
-
-  
 }
