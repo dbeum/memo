@@ -1,9 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
 
 class LeaveRequests extends StatelessWidget {
+  Future<void> approveLeaveRequest(BuildContext context, String requestId, String userId, String leaveType, int duration) async {
+    try {
+      // Get the user document
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final userData = userDoc.data();
+
+      if (userData != null) {
+        // Add detailed logging for the user data
+        print('User data: $userData');
+
+        // Get the current leave balance
+        final leaveBalances = userData['leaveBalances'] as Map<String, dynamic>;
+        print('Leave balances: $leaveBalances');
+
+        final double currentLeaveBalance = leaveBalances[leaveType]?.toDouble() ?? 0;
+        print('Current leave balance for $leaveType: $currentLeaveBalance');
+        print('Requested duration: $duration');
+
+        // Check if the user has sufficient leave balance
+        if (currentLeaveBalance == double.infinity || currentLeaveBalance >= duration) {
+          // Deduct the leave balance
+          if (currentLeaveBalance != double.infinity) {
+            final newLeaveBalance = currentLeaveBalance - duration;
+            leaveBalances[leaveType] = newLeaveBalance;
+
+            // Update the user's leave balance
+            await FirebaseFirestore.instance.collection('users').doc(userId).update({
+              'leaveBalances': leaveBalances,
+            });
+          }
+
+          // Update the leave request status
+          await FirebaseFirestore.instance.collection('leave_requests').doc(requestId).update({
+            'status': 'approved',
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave approved successfully')));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Insufficient leave balance')));
+        }
+      } else {
+        print('User data is null');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User data not found')));
+      }
+    } catch (e) {
+      print('Error approving leave request: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error approving leave request: $e')));
+    }
+  }
+
+  Future<void> rejectLeaveRequest(BuildContext context, String requestId) async {
+    // Update the leave request status
+    await FirebaseFirestore.instance.collection('leave_requests').doc(requestId).update({
+      'status': 'rejected',
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave rejected successfully')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +87,11 @@ class LeaveRequests extends StatelessWidget {
               final reason = data != null && data.containsKey('reason') ? data['reason'] : 'No reason provided';
               final userId = data != null && data.containsKey('userId') ? data['userId'] : 'Unknown';
               final pdfUrl = data != null && data.containsKey('pdfUrl') ? data['pdfUrl'] : null;
-              final startDate = data != null && data.containsKey('startDate') ? (data['startDate'] as Timestamp).toDate() : null;
-              final endDate = data != null && data.containsKey('endDate') ? (data['endDate'] as Timestamp).toDate() : null;
+              final startDate = data != null && data.containsKey('startDate') ? data['startDate'].toDate() : null;
+              final endDate = data != null && data.containsKey('endDate') ? data['endDate'].toDate() : null;
+
+              // Calculate the leave duration
+              final duration = startDate != null && endDate != null ? endDate.difference(startDate).inDays + 1 : 0;
 
               return ListTile(
                 title: Text(leaveType),
@@ -39,8 +100,8 @@ class LeaveRequests extends StatelessWidget {
                   children: [
                     Text('Reason: $reason'),
                     Text('Employee ID: $userId'),
-                    if (startDate != null) Text('Start Date: ${DateFormat('yyyy-MM-dd').format(startDate)}'),
-                    if (endDate != null) Text('End Date: ${DateFormat('yyyy-MM-dd').format(endDate)}'),
+                    if (startDate != null && endDate != null)
+                      Text('Duration: ${startDate.toLocal().toString().split(' ')[0]} to ${endDate.toLocal().toString().split(' ')[0]}'),
                   ],
                 ),
                 trailing: Row(
@@ -49,17 +110,13 @@ class LeaveRequests extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.check),
                       onPressed: () async {
-                        await FirebaseFirestore.instance.collection('leave_requests').doc(leaveRequest.id).update({
-                          'status': 'approved',
-                        });
+                        await approveLeaveRequest(context, leaveRequest.id, userId, leaveType, duration);
                       },
                     ),
                     IconButton(
                       icon: Icon(Icons.close),
                       onPressed: () async {
-                        await FirebaseFirestore.instance.collection('leave_requests').doc(leaveRequest.id).update({
-                          'status': 'rejected',
-                        });
+                        await rejectLeaveRequest(context, leaveRequest.id);
                       },
                     ),
                     IconButton(

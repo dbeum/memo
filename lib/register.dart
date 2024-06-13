@@ -45,6 +45,35 @@ class _registerState extends State<register> {
     super.dispose();
   }
 
+  Future<Map<String, dynamic>> getInitialLeaveBalances(String role) async {
+    switch (role) {
+      case 'Junior Staff':
+        return {
+          'Annual Leave': 18,
+          'Casual Leave': 7,
+          'Sick Leave': double.infinity,
+          'Maternity Leave': double.infinity,
+          'Examination Leave': double.infinity,
+        };
+      case 'Senior Staff':
+        return {
+          'Annual Leave': 21,
+          'Casual Leave': 7,
+          'Sick Leave': double.infinity,
+          'Maternity Leave': double.infinity,
+          'Examination Leave': double.infinity,
+        };
+      default: // Default to Junior Staff
+        return {
+          'Annual Leave': 18,
+          'Casual Leave': 7,
+          'Sick Leave': double.infinity,
+          'Maternity Leave': double.infinity,
+          'Examination Leave': double.infinity,
+        };
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenTypeLayout.builder(
@@ -208,10 +237,13 @@ class _registerState extends State<register> {
                                   password: password,
                                 );
 
+                                final leaveBalances = await getInitialLeaveBalances(role);
+
                                 await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
                                   'email': email,
                                   'role': role,
                                   'gender': gender,
+                                  'leaveBalances': leaveBalances,
                                 });
 
                                 print('User registered: ${userCredential.user!.uid}');
@@ -416,10 +448,13 @@ class _registerState extends State<register> {
                                   password: password,
                                 );
 
+                                final leaveBalances = await getInitialLeaveBalances(role);
+
                                 await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
                                   'email': email,
                                   'role': role,
                                   'gender': gender,
+                                  'leaveBalances': leaveBalances,
                                 });
 
                                 print('User registered: ${userCredential.user!.uid}');
