@@ -20,25 +20,34 @@ class EmployeeDetailPage extends StatelessWidget {
           }
 
           final user = snapshot.data!.data() as Map<String, dynamic>;
+          final leaveBalances = user['leaveBalances'] as Map<String, dynamic>?;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                title: Text(user['name'],style: TextStyle(fontSize: 22,fontWeight:FontWeight.bold),),
+                title: Text(user['name'], style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 subtitle: Text('Employee ID: ${user['employeeId']}'),
               ),
               ListTile(
-                title: Text('Gender:',style: TextStyle(fontWeight: FontWeight.bold),),
+                title: Text('Gender:', style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(user['gender']),
               ),
               ListTile(
-                title: Text('Role:',style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text('Role:', style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(user['role']),
               ),
-              SizedBox(height: 10,),
-            
-              Text('   LEAVE HISTORY',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+              SizedBox(height: 10),
+              ListTile(
+                title: Text('Annual Leave Balance:', style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(leaveBalances != null ? '${leaveBalances['Annual Leave']}' : 'N/A'),
+              ),
+              ListTile(
+                title: Text('Casual Leave Balance:', style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(leaveBalances != null ? '${leaveBalances['Casual Leave']}' : 'N/A'),
+              ),
+              SizedBox(height: 10),
+              Text('   LEAVE HISTORY', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Expanded(
                 child: LeaveHistory(userId: userId),
               ),
@@ -83,9 +92,7 @@ class LeaveHistory extends StatelessWidget {
               subtitle: Text('Status: ${leaveRequest['status']}'),
               trailing: leaveRequest['timestamp'] != null
                   ? Text(
-                      (leaveRequest['timestamp'] as Timestamp)
-                          .toDate()
-                          .toString(),
+                      (leaveRequest['timestamp'] as Timestamp).toDate().toString(),
                     )
                   : null,
             );
