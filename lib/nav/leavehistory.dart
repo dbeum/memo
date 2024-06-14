@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
 class LeaveHistoryPage extends StatelessWidget {
   @override
@@ -45,11 +46,28 @@ class LeaveHistoryPage extends StatelessWidget {
             itemCount: leaveRequests.length,
             itemBuilder: (context, index) {
               final request = leaveRequests[index];
+              final leaveType = request['leaveType'];
+              final reason = request['reason'];
+              final status = request['status'];
+              final timestamp = (request['timestamp'] as Timestamp).toDate();
+              final startDate = (request['startDate'] as Timestamp).toDate();
+              final endDate = (request['endDate'] as Timestamp).toDate();
+
+              final formattedTimestamp = DateFormat.yMMMd().add_jm().format(timestamp);
+              final formattedStartDate = DateFormat.yMMMd().format(startDate);
+              final formattedEndDate = DateFormat.yMMMd().format(endDate);
+
               return ListTile(
-                title: Text(request['leaveType']),
-                subtitle: Text(request['reason']),
-                trailing: Text(request['status']),
-                // Add more details as needed
+                title: Text(leaveType),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Reason: $reason'),
+                    Text('Application Date: $formattedTimestamp'),
+                    Text('Duration: $formattedStartDate - $formattedEndDate'),
+                  ],
+                ),
+                trailing: Text(status),
               );
             },
           );
