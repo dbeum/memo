@@ -27,7 +27,7 @@ class EmployeeDetailPage extends StatelessWidget {
             children: [
               ListTile(
                 title: Text(user['name'], style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                subtitle: Text('Employee ID: ${user['employeeId']}'),
+                subtitle: Text('Employee ID: ${user['employeeId']} | User ID: $userId'), // Added User ID
               ),
               ListTile(
                 title: Text('Gender:', style: TextStyle(fontWeight: FontWeight.bold)),

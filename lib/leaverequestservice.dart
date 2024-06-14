@@ -62,6 +62,11 @@ class LeaveRequests extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave rejected successfully')));
   }
 
+  Future<Map<String, dynamic>?> getUserData(String userId) async {
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return userDoc.data();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,59 +98,81 @@ class LeaveRequests extends StatelessWidget {
               // Calculate the leave duration
               final duration = startDate != null && endDate != null ? endDate.difference(startDate).inDays + 1 : 0;
 
-              return ListTile(
-                title: Text(leaveType),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Reason: $reason'),
-                    Text('Employee ID: $userId'),
-                    if (startDate != null && endDate != null)
-                      Text('Duration: ${startDate.toLocal().toString().split(' ')[0]} to ${endDate.toLocal().toString().split(' ')[0]}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.check),
-                      onPressed: () async {
-                        await approveLeaveRequest(context, leaveRequest.id, userId, leaveType, duration);
-                      },
+              return FutureBuilder<Map<String, dynamic>?>(
+                future: getUserData(userId),
+                builder: (context, userSnapshot) {
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return ListTile(
+                      title: Text(leaveType),
+                      subtitle: Text('Loading user details...'),
+                    );
+                  }
+
+                  if (userSnapshot.hasError || !userSnapshot.hasData || userSnapshot.data == null) {
+                    return ListTile(
+                      title: Text(leaveType),
+                      subtitle: Text('Failed to load user details'),
+                    );
+                  }
+
+                  final userData = userSnapshot.data!;
+                  final employeeId = userData.containsKey('employeeId') ? userData['employeeId'] : 'Unknown';
+
+                  return ListTile(
+                    title: Text(leaveType),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Reason: $reason'),
+                        Text('Employee ID: $employeeId'),
+                        if (startDate != null && endDate != null)
+                          Text('Duration: ${startDate.toLocal().toString().split(' ')[0]} to ${endDate.toLocal().toString().split(' ')[0]}'),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () async {
-                        await rejectLeaveRequest(context, leaveRequest.id);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.file_download),
-                      onPressed: () async {
-                        if (pdfUrl != null && pdfUrl.isNotEmpty) {
-                          try {
-                            final uri = Uri.parse(pdfUrl);
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.check),
+                          onPressed: () async {
+                            await approveLeaveRequest(context, leaveRequest.id, userId, leaveType, duration);
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () async {
+                            await rejectLeaveRequest(context, leaveRequest.id);
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.file_download),
+                          onPressed: () async {
+                            if (pdfUrl != null && pdfUrl.isNotEmpty) {
+                              try {
+                                final uri = Uri.parse(pdfUrl);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(uri);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Could not launch URL')),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Invalid PDF URL: $e')),
+                                );
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Could not launch URL')),
+                                SnackBar(content: Text('No PDF attached')),
                               );
                             }
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Invalid PDF URL: $e')),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No PDF attached')),
-                          );
-                        }
-                      },
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           );
