@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web_1/employeelist.dart';
+import 'package:web_1/analytics.dart';
 import 'package:web_1/home.dart';
 import 'package:web_1/leaverequest.dart';
 import 'package:web_1/leaverequestservice.dart';
@@ -36,6 +37,9 @@ SizedBox(height: 15,),
 TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => admin(),)), child: Text('PROFILE EDITS',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
 SizedBox(height:15),
 TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => EmployeeListPage())), child: Text('EMPLOYEES',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
+SizedBox(height:15),
+TextButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveAnalytics())), child: Text('LEAVE ANALYTICS',style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.w600),)),
+
  
           ],
         ),),

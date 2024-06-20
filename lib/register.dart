@@ -247,6 +247,7 @@ class _registerState extends State<register> {
                                 });
 
                                 print('User registered: ${userCredential.user!.uid}');
+                                
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
