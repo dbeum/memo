@@ -88,6 +88,13 @@ class LeaveAnalytics extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                    SizedBox(
+                    height: 500,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: LeaveAnalyticsPieChart(leaveTypesCount),
+                    ),
+                  ),
                   Card(
                     child: ListTile(
                       title: Text('Total Leave Requests', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -133,13 +140,7 @@ class LeaveAnalytics extends StatelessWidget {
                       ),
                     );
                   }).toList(),
-                  SizedBox(
-                    height: 500,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: LeaveAnalyticsPieChart(leaveTypesCount),
-                    ),
-                  ),
+                
                   ElevatedButton(
                     onPressed: () async {
                       final data = await fetchLeaveData();
