@@ -34,8 +34,12 @@ class EmployeeDetailPage extends StatelessWidget {
                 subtitle: Text(user['gender']),
               ),
               ListTile(
-                title: Text('Role:', style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(user['role']),
+                title: Text('LEVEL:${user['role']}'),
+             
+              ),
+                ListTile(
+                title: Text('Postion:', style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(user['position']),
               ),
               SizedBox(height: 10),
               ListTile(

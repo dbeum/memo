@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:web_1/employeedetail.dart';
+import 'package:intl/intl.dart';
 
 class EmployeeListPage extends StatefulWidget {
   @override
@@ -10,6 +11,31 @@ class EmployeeListPage extends StatefulWidget {
 class _EmployeeListPageState extends State<EmployeeListPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
+  Map<String, bool> _leaveStatus = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLeaveStatus();
+  }
+
+  void _fetchLeaveStatus() async {
+    QuerySnapshot leaveSnapshot = await FirebaseFirestore.instance.collection('leaveRequests').get();
+    DateTime now = DateTime.now();
+
+    leaveSnapshot.docs.forEach((leaveDoc) {
+      DateTime startDate = (leaveDoc['startDate'] as Timestamp).toDate();
+      DateTime endDate = (leaveDoc['endDate'] as Timestamp).toDate();
+
+      if (now.isAfter(startDate) && now.isBefore(endDate)) {
+        _leaveStatus[leaveDoc['employeeId']] = true;
+      } else {
+        _leaveStatus[leaveDoc['employeeId']] = false;
+      }
+    });
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,27 +68,69 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
             return name.contains(searchQuery);
           }).toList();
 
-          return ListView.builder(
-            itemCount: filteredUsers.length,
-            itemBuilder: (context, index) {
-              final user = filteredUsers[index];
-              return ListTile(
-                title: Text(user['name']),
-                subtitle: Text('Employee ID: ${user['employeeId']}'),
-                trailing: Text(user['role']),
-                   onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EmployeeDetailPage(userId: user.id),
-                          ),
-                        );
-                      },
+          final categorizedUsers = _categorizeUsers(filteredUsers);
+
+          return ListView(
+            children: categorizedUsers.keys.map((staffType) {
+              return ExpansionTile(
+                title: Text(staffType),
+                children: [
+                  _buildCategorySection('Currently On Leave', categorizedUsers[staffType]!['onLeave']!),
+                  _buildCategorySection('Not On Leave', categorizedUsers[staffType]!['notOnLeave']!),
+                ],
               );
-            },
+            }).toList(),
           );
         },
       ),
+    );
+  }
+
+  Map<String, Map<String, List<QueryDocumentSnapshot>>> _categorizeUsers(List<QueryDocumentSnapshot> users) {
+    Map<String, Map<String, List<QueryDocumentSnapshot>>> categorizedUsers = {};
+
+    users.forEach((user) {
+      final staffType = user['staffType'];
+      final employeeId = user['employeeId'];
+
+      if (!categorizedUsers.containsKey(staffType)) {
+        categorizedUsers[staffType] = {'onLeave': [], 'notOnLeave': []};
+      }
+
+      if (_leaveStatus[employeeId] == true) {
+        categorizedUsers[staffType]!['onLeave']!.add(user);
+      } else {
+        categorizedUsers[staffType]!['notOnLeave']!.add(user);
+      }
+    });
+
+    return categorizedUsers;
+  }
+
+  Widget _buildCategorySection(String title, List<QueryDocumentSnapshot> users) {
+    return ExpansionTile(
+      title: Text(title),
+      children: users.map((user) {
+        return ListTile(
+          title: Text(user['name']),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Employee ID: ${user['employeeId']}'),
+              Text('Position: ${user['position']}'),
+            ],
+          ),
+          trailing: Text(user['role']),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EmployeeDetailPage(userId: user.id),
+              ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 

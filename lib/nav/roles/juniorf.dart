@@ -21,7 +21,7 @@ class _juniorFState extends State<juniorF> {
   String? role;
   String? gender;
   String? email;
-
+  String? position;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _juniorFState extends State<juniorF> {
           setState(() {
             name = data['name'];
             employeeId = data['employeeId'];
+            position= data['position']?? 'No position held';
             role = data['role'] ?? 'No role available';
             gender = data['gender'] ?? 'No gender available';
             email = user.email ?? 'No email available';
@@ -103,11 +104,11 @@ class _juniorFState extends State<juniorF> {
               style: TextStyle(fontSize: 25),
             ),
           ),
-          Positioned(
+           Positioned(
             top: 350,
             left: 50,
             child: Text(
-              'Role: ${role ?? 'Loading...'}',
+              'Role: ${position ?? 'Loading...'}',
               style: TextStyle(fontSize: 25),
             ),
           ),
@@ -115,7 +116,7 @@ class _juniorFState extends State<juniorF> {
             top: 400,
             left: 50,
             child: Text(
-              'Gender: ${gender ?? 'Loading...'}',
+              'Level: ${role ?? 'Loading...'}',
               style: TextStyle(fontSize: 25),
             ),
           ),
@@ -123,12 +124,20 @@ class _juniorFState extends State<juniorF> {
             top: 450,
             left: 50,
             child: Text(
+              'Gender: ${gender ?? 'Loading...'}',
+              style: TextStyle(fontSize: 25),
+            ),
+          ),
+          Positioned(
+            top: 500,
+            left: 50,
+            child: Text(
               'Email: ${email ?? 'Loading...'}',
               style: TextStyle(fontSize: 25),
             ),
           ),
           Positioned(
-            top: 480,
+            top: 530,
             left: 50,
             child: Row(
               children: [

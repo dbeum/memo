@@ -14,6 +14,7 @@ class _InitialDataFormState extends State<InitialDataForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _employeeIdController = TextEditingController();
+  final _positionController = TextEditingController();
   String? _imageUrl;
   PlatformFile? _pdfFile;
 
@@ -26,6 +27,7 @@ class _InitialDataFormState extends State<InitialDataForm> {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'name': _nameController.text,
           'employeeId': _employeeIdController.text,
+          'position': _positionController.text,
           'imageUrl': _imageUrl,
           'pdfUrl': pdfUrl,
           'status': 'pending',
@@ -84,6 +86,17 @@ class _InitialDataFormState extends State<InitialDataForm> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your employee ID';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10,),
+                TextFormField(
+                controller: _positionController,
+                decoration: InputDecoration(labelText: 'Role'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the position you hold';
                   }
                   return null;
                 },

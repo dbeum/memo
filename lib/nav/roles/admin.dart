@@ -25,7 +25,15 @@ class admin extends StatelessWidget {
               final user = users[index];
               return ListTile(
                 title: Text(user['name']),
-                subtitle: Text('Employee ID: ${user['employeeId']}'),
+
+                  subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                       
+                        Text('Employee ID: ${user['employeeId']}'),
+                       Text('Position: ${user['position']}'),
+                      ],
+                    ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

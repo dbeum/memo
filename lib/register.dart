@@ -16,6 +16,7 @@ class register extends StatefulWidget {
 class _registerState extends State<register> {
   String _selectedRole = 'Junior Staff';
   String _selectedGender = 'Male';
+  String _selectedStaffType = 'Teaching Staff-CONAS';
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -45,7 +46,22 @@ class _registerState extends State<register> {
     super.dispose();
   }
 
-  Future<Map<String, dynamic>> getInitialLeaveBalances(String role) async {
+ Future<Map<String, dynamic>> getInitialLeaveBalances(String role, String staffType) async {
+  const teachingStaffTypes = [
+    'Teaching Staff-CONAS',
+    'Teaching Staff-CBSS',
+    'Teaching Staff-CACOS',
+  ];
+  
+  if (role == 'Senior Staff' && teachingStaffTypes.contains(staffType)) {
+    return {
+      'Annual Leave': 30,
+      'Casual Leave': 7,
+      'Sick Leave': double.infinity,
+      'Maternity Leave': double.infinity,
+      'Examination Leave': double.infinity,
+    };
+  }
     switch (role) {
       case 'Junior Staff':
         return {
@@ -89,9 +105,9 @@ class _registerState extends State<register> {
           children: [
             SizedBox(height: 80),
             Image.asset('images/logo.png', height: 200),
-            SizedBox(height: 50),
+            SizedBox(height: 20),
             Container(
-              height: 310,
+              height: 370,
               width: 250,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -183,6 +199,41 @@ class _registerState extends State<register> {
                             ),
                           ),
                         ),
+                          SizedBox(height: 20),
+                        Text(
+                          'STAFF TYPE',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          height: 30,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: _selectedStaffType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedStaffType = newValue!;
+                                });
+                              },
+                              items: ['Teaching Staff-CONAS','Teaching Staff-CBSS','Teaching Staff-CACOS','Non-Teaching Staff'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                       
                         SizedBox(height: 20),
                         Text(
                           'GENDER',
@@ -217,7 +268,7 @@ class _registerState extends State<register> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 9),
                         Container(
                           height: 25,
                           width: 100,
@@ -230,6 +281,7 @@ class _registerState extends State<register> {
                               final email = _email.text;
                               final password = _password.text;
                               final role = _selectedRole;
+                              final staffType = _selectedStaffType;
                               final gender = _selectedGender;
                               try {
                                 final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -237,11 +289,12 @@ class _registerState extends State<register> {
                                   password: password,
                                 );
 
-                                final leaveBalances = await getInitialLeaveBalances(role);
+                                final leaveBalances = await getInitialLeaveBalances(role,staffType);
 
                                 await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
                                   'email': email,
                                   'role': role,
+                                  'staffType': staffType,
                                   'gender': gender,
                                   'leaveBalances': leaveBalances,
                                 });
@@ -301,9 +354,9 @@ class _registerState extends State<register> {
           children: [
             SizedBox(height: 80),
             Image.asset('images/logo.png', height: 200),
-            SizedBox(height: 50),
+            SizedBox(height: 20),
             Container(
-              height: 310,
+              height: 370,
               width: 250,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -396,6 +449,41 @@ class _registerState extends State<register> {
                           ),
                         ),
                         SizedBox(height: 20),
+                         
+                        Text(
+                          'STAFF TYPE',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          height: 30,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: _selectedStaffType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedStaffType = newValue!;
+                                });
+                              },
+                              items: ['Teaching Staff-CONAS','Teaching Staff-CBSS','Teaching Staff-CACOS', 'Non-Teaching Staff'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                         SizedBox(height: 20),
                         Text(
                           'GENDER',
                           style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -429,7 +517,7 @@ class _registerState extends State<register> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 9),
                         Container(
                           height: 25,
                           width: 100,
@@ -442,6 +530,7 @@ class _registerState extends State<register> {
                               final email = _email.text;
                               final password = _password.text;
                               final role = _selectedRole;
+                              final staffType = _selectedStaffType;
                               final gender = _selectedGender;
                               try {
                                 final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -449,12 +538,13 @@ class _registerState extends State<register> {
                                   password: password,
                                 );
 
-                                final leaveBalances = await getInitialLeaveBalances(role);
+                                final leaveBalances = await getInitialLeaveBalances(role,staffType);
 
                                 await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
                                   'email': email,
                                   'role': role,
                                   'gender': gender,
+                                  'staffType': staffType,
                                   'leaveBalances': leaveBalances,
                                 });
 

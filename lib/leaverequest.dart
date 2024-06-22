@@ -19,12 +19,14 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
   PlatformFile? _pickedFile;
   String? _userGender;
   List<String> _leaveTypes = ['Annual Leave', 'Sick Leave', 'Casual Leave', 'Examination Leave'];
+  Map<String, dynamic> _leaveBalances = {};
 
   @override
   void initState() {
     _reasonController = TextEditingController();
     super.initState();
     _fetchUserGender();
+     _fetchLeaveBalances();
   }
 
   @override
@@ -49,6 +51,19 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
     }
   }
 
+ 
+  Future<void> _fetchLeaveBalances() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final userData = userDoc.data();
+      if (userData != null && userData.containsKey('leaveBalances')) {
+        setState(() {
+          _leaveBalances = Map<String, dynamic>.from(userData['leaveBalances']);
+        });
+      }
+    }
+  }
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -111,6 +126,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Text('Annual Leave Balance: ${_leaveBalances['Annual Leave'] ?? 'N/A'} days', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text('Casual Leave Balance: ${_leaveBalances['Casual Leave'] ?? 'N/A'} days', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            SizedBox(height: 20),
             Text('Leave Type', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: _selectedLeaveType,

@@ -52,10 +52,12 @@ class LeaveHistoryPage extends StatelessWidget {
               final timestamp = (request['timestamp'] as Timestamp).toDate();
               final startDate = (request['startDate'] as Timestamp).toDate();
               final endDate = (request['endDate'] as Timestamp).toDate();
+             final requestData = request.data() as Map<String, dynamic>?;
 
               final formattedTimestamp = DateFormat.yMMMd().add_jm().format(timestamp);
               final formattedStartDate = DateFormat.yMMMd().format(startDate);
               final formattedEndDate = DateFormat.yMMMd().format(endDate);
+final rejectionReason = requestData != null && requestData.containsKey('rejectionReason') ? requestData['rejectionReason'] : null;
 
               return ListTile(
                 title: Text(leaveType),
@@ -65,6 +67,8 @@ class LeaveHistoryPage extends StatelessWidget {
                     Text('Reason: $reason'),
                     Text('Application Date: $formattedTimestamp'),
                     Text('Duration: $formattedStartDate - $formattedEndDate'),
+                    if (status == 'rejected' && rejectionReason != null)
+                      Text('Rejection Reason: $rejectionReason'),
                   ],
                 ),
                 trailing: Text(status),

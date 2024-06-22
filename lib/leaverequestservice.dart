@@ -5,15 +5,11 @@ import 'package:url_launcher/url_launcher.dart';
 class LeaveRequests extends StatelessWidget {
   Future<void> approveLeaveRequest(BuildContext context, String requestId, String userId, String leaveType, int duration) async {
     try {
-      // Get the user document
       final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       final userData = userDoc.data();
 
       if (userData != null) {
-        // Add detailed logging for the user data
         print('User data: $userData');
-
-        // Get the current leave balance
         final leaveBalances = userData['leaveBalances'] as Map<String, dynamic>;
         print('Leave balances: $leaveBalances');
 
@@ -21,20 +17,16 @@ class LeaveRequests extends StatelessWidget {
         print('Current leave balance for $leaveType: $currentLeaveBalance');
         print('Requested duration: $duration');
 
-        // Check if the user has sufficient leave balance
         if (currentLeaveBalance == double.infinity || currentLeaveBalance >= duration) {
-          // Deduct the leave balance
           if (currentLeaveBalance != double.infinity) {
             final newLeaveBalance = currentLeaveBalance - duration;
             leaveBalances[leaveType] = newLeaveBalance;
 
-            // Update the user's leave balance
             await FirebaseFirestore.instance.collection('users').doc(userId).update({
               'leaveBalances': leaveBalances,
             });
           }
 
-          // Update the leave request status
           await FirebaseFirestore.instance.collection('leave_requests').doc(requestId).update({
             'status': 'approved',
           });
@@ -53,13 +45,46 @@ class LeaveRequests extends StatelessWidget {
     }
   }
 
-  Future<void> rejectLeaveRequest(BuildContext context, String requestId) async {
-    // Update the leave request status
+  Future<void> rejectLeaveRequest(BuildContext context, String requestId, String reason) async {
     await FirebaseFirestore.instance.collection('leave_requests').doc(requestId).update({
       'status': 'rejected',
+      'rejectionReason': reason,
     });
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Leave rejected successfully')));
+  }
+
+  Future<String?> showRejectionReasonDialog(BuildContext context) async {
+    TextEditingController _reasonController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rejection Reason'),
+          content: TextField(
+            controller: _reasonController,
+            decoration: InputDecoration(
+              hintText: 'Enter reason for rejection',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(_reasonController.text);
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<Map<String, dynamic>?> getUserData(String userId) async {
@@ -95,7 +120,6 @@ class LeaveRequests extends StatelessWidget {
               final startDate = data != null && data.containsKey('startDate') ? data['startDate'].toDate() : null;
               final endDate = data != null && data.containsKey('endDate') ? data['endDate'].toDate() : null;
 
-              // Calculate the leave duration
               final duration = startDate != null && endDate != null ? endDate.difference(startDate).inDays + 1 : 0;
 
               return FutureBuilder<Map<String, dynamic>?>(
@@ -141,7 +165,10 @@ class LeaveRequests extends StatelessWidget {
                         IconButton(
                           icon: Icon(Icons.close),
                           onPressed: () async {
-                            await rejectLeaveRequest(context, leaveRequest.id);
+                            final reason = await showRejectionReasonDialog(context);
+                            if (reason != null && reason.isNotEmpty) {
+                              await rejectLeaveRequest(context, leaveRequest.id, reason);
+                            }
                           },
                         ),
                         IconButton(
